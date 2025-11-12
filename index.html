@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>180-Day English Fluency Planner — Bruno</title>
+  <style>
+    :root{
+      --bg:#05060a;
+      --panel:#071127;
+      --accent1:#0ea5ff; /* cyan-blue */
+      --accent2:#164e8c; /* deep blue */
+      --glass: rgba(255,255,255,0.03);
+      --muted: rgba(255,255,255,0.6);
+      --success: #24e5a4;
+      --danger:#ff6b6b;
+      --glass-2: rgba(14,165,255,0.06);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg) 0%, #001021 100%);color: #e6f0ff}
+    .app{max-width:1150px;margin:28px auto;padding:20px;}
+
+    .header{display:flex;gap:16px;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:0 8px 30px rgba(10,90,160,0.35), inset 0 -6px 18px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .title{font-size:18px;line-height:1;color: #dff3ff}
+    .subtitle{font-size:12px;color:var(--muted)}
+
+    .controls{display:flex;gap:8px;align-items:center}
+    .btn{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);padding:10px 14px;border-radius:10px;color:var(--muted);cursor:pointer;box-shadow:0 6px 18px rgba(2,8,23,0.6)}
+    .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#001019;border:none}
+    .panel{margin-top:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:14px;box-shadow:0 14px 40px rgba(3,10,30,0.7);border:1px solid rgba(255,255,255,0.03)}
+
+    .layout{display:grid;grid-template-columns:360px 1fr;gap:18px}
+
+    /* sidebar */
+    .sidebar{padding:12px;min-height:480px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.03)}
+    .progress-wrap{display:flex;gap:12px;align-items:center}
+    .progress{height:12px;background:rgba(255,255,255,0.04);border-radius:20px;flex:1;position:relative;overflow:hidden}
+    .progress > i{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 6px 20px rgba(14,165,255,0.14);}
+    .small{font-size:12px;color:var(--muted)}
+
+    .phase-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+    .phase-item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
+    .phase-item.active{background:linear-gradient(90deg, rgba(14,165,255,0.06), rgba(22,78,140,0.04));box-shadow:0 6px 30px rgba(8,28,64,0.6)}
+    .phase-dot{width:12px;height:12px;border-radius:4px;background:var(--accent2);box-shadow:0 6px 18px rgba(8,28,64,0.6)}
+
+    /* main planner */
+    .main{padding:12px}
+    .toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .search{flex:1;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:var(--panel);color:#dfefff}
+
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(12,1fr);gap:8px}
+    .day{padding:10px;border-radius:10px;min-height:66px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02);box-shadow:0 8px 20px rgba(2,8,23,0.6);cursor:pointer}
+    .day .num{font-weight:700}
+    .day .phase{font-size:11px;color:var(--muted)}
+    .day.completed{background:linear-gradient(90deg, rgba(36,229,164,0.08), rgba(14,165,255,0.03));border:1px solid rgba(36,229,164,0.12)}
+
+    .details{margin-top:12px;padding:12px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(14,165,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+    .tasks{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .task{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border:1px solid rgba(255,255,255,0.02)}
+    .task input[type=checkbox]{width:18px;height:18px}
+
+    .footer{margin-top:18px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+
+    /* responsive */
+    @media (max-width:980px){.layout{grid-template-columns:1fr;}.grid{grid-template-columns:repeat(6,1fr)} }
+    @media (max-width:560px){.grid{grid-template-columns:repeat(3,1fr)} }
+
+    /* micro animations */
+    .logo{transform:rotate(-6deg);transition:transform .5s}
+    .logo:hover{transform:rotate(0deg)}
+    .day:hover{transform:translateY(-6px);transition:transform .18s}
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="brand">
+        <div class="logo">EN</div>
+        <div>
+          <div class="title">180-Day English Fluency Planner</div>
+          <div class="subtitle">Usa hábito + subconsciente — Plano de 6 meses</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn" id="resetBtn" title="Resetar progresso">Resetar</button>
+        <button class="btn primary" id="exportBtn">Exportar JSON</button>
+      </div>
+    </div>
+
+    <div class="panel layout">
+      <aside class="sidebar">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="small">Progresso</div>
+              <div style="font-weight:700;font-size:18px"><span id="completedCount">0</span>/180 dias</div>
+            </div>
+            <div style="width:140px">
+              <div class="progress-wrap">
+                <div class="progress" title="progresso">
+                  <i id="progressBar"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="small">Fases</div>
+          <div class="phase-list" id="phaseList"></div>
+        </div>
+
+        <div class="card">
+          <div class="small">Afirmação (manhã/noite)</div>
+          <textarea id="affirmation" rows="3" style="width:100%;background:transparent;border:none;color:#dff3ff;resize:vertical">I learn English easily. I speak with confidence.</textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" id="playAff">Tocar</button>
+            <button class="btn" id="saveAff">Salvar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="small">Export / Import</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input id="importFile" type="file" accept="application/json" class="btn" style="padding:8px 6px" />
+            <button class="btn" id="importBtn">Importar</button>
+          </div>
+          <div class="small" style="margin-top:8px">Dica: use exportar antes de resetar.</div>
+        </div>
+
+      </aside>
+
+      <main class="main">
+        <div class="toolbar">
+          <input id="searchInput" class="search" placeholder="Buscar por dia, fase ou palavra-chave..." />
+          <div style="display:flex;gap:8px;margin-left:12px">
+            <button class="btn" id="toggleView">Alternar 12/6 cols</button>
+            <button class="btn" id="focusToday">Focar no dia de hoje</button>
+          </div>
+        </div>
+
+        <div class="grid" id="grid"></div>
+
+        <div class="details" id="details">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:800" id="detailTitle">Selecione um dia</div>
+              <div class="small" id="detailSub">Veja as tarefas, marque como concluído e grave sua evolução.</div>
+            </div>
+            <div>
+              <button class="btn" id="markDone">Marcar como concluído</button>
+            </div>
+          </div>
+
+          <div class="tasks" id="tasks"></div>
+
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn primary" id="saveDay">Salvar</button>
+            <button class="btn" id="clearNotes">Limpar notas</button>
+          </div>
+        </div>
+
+        <div class="footer">
+          <div>Design: futurista — Tema azul/preto · Bruno Paulon</div>
+          <div id="lastSaved" class="small">Nenhuma ação ainda</div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // --- Data model: phases and templates
+    const PHASES = [
+      { id:1, name:'Fase 1: Fundamentos (1–30)', start:1, end:30, tasks:[
+        '15min Anki/Memrise (vocabulário)',
+        '20min Vídeos curtos (BBC/BASICS)',
+        '10min Leitura simples',
+        '15min Escrever 3 frases',
+        '10min Shadowing'
+      ]},
+      { id:2, name:'Fase 2: Consolidar (31–60)', start:31, end:60, tasks:[
+        '20min Revisar vocabulário (Anki)',
+        '30min Vídeos com legenda em inglês',
+        '10min Diário mental em inglês',
+        '15min Conversa com IA/apps',
+        '15min Leitura técnica curta'
+      ]},
+      { id:3, name:'Fase 3: Produção ativa (61–90)', start:61, end:90, tasks:[
+        '20min Shadowing (nativos)',
+        '20min Podcasts',
+        '20min Escrever posts técnicos em inglês',
+        '20min Troca linguística (Tandem)'
+      ]},
+      { id:4, name:'Fase 4: Fluência funcional (91–120)', start:91, end:120, tasks:[
+        '30min Conversas reais (italki/Discord)',
+        '20min Leitura de docs técnicos',
+        '20min Séries sem legenda',
+        '10min Diário em áudio'
+      ]},
+      { id:5, name:'Fase 5: Profissionalização (121–150)', start:121, end:150, tasks:[
+        '20min Vocabulário técnico',
+        '30min Entrevistas simuladas',
+        '20min Redigir emails profissionais',
+        '20min Cultura corporativa US/CH'
+      ]},
+      { id:6, name:'Fase 6: Imersão total (151–180)', start:151, end:180, tasks:[
+        'Dia em inglês — redes, música, código',
+        'Gravar vídeos curtos explicando código',
+        'Fazer entrevista com recrutador internacional',
+        'Revisão final e carta ao eu passado'
+      ]}
+    ];
+
+    const TOTAL = 180;
+    const STORAGE_KEY = 'english180_bruno_planner_v1';
+
+    // --- Utility
+    const $ = id=>document.getElementById(id);
+    function qs(sel, root=document){return root.querySelector(sel)}
+
+    // --- Load or init
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if(!state){
+      state = {
+        days: Array.from({length:TOTAL}, (_,i)=>({
+          day: i+1,
+          date: null,
+          phase: PHASES.find(p=>i+1>=p.start && i+1<=p.end).id,
+          completed:false,
+          notes:'',
+          tasks: PHASES.find(p=>i+1>=p.start && i+1<=p.end).tasks.map(t=>({title:t, done:false}))
+        })),
+        affirmation: 'I learn English easily. I speak with confidence.',
+        viewCols:12
+      };
+      save();
+    }
+
+    // --- Render phases
+    function renderPhases(){
+      const container = $('phaseList'); container.innerHTML='';
+      PHASES.forEach(p=>{
+        const el = document.createElement('div');
+        el.className='phase-item'+(p.id===1? ' active':'');
+        el.innerHTML = `<div style="display:flex;align-items:center;gap:10px"><div class='phase-dot'></div><div style='font-weight:700'>${p.name}</div></div>`;
+        el.onclick = ()=>{filterByPhase(p.id);document.querySelectorAll('.phase-item').forEach(n=>n.classList.remove('active'));el.classList.add('active')}
+        container.appendChild(el);
+      })
+    }
+
+    // --- Render grid
+    function renderGrid(filter=''){
+      const grid = $('grid'); grid.innerHTML='';
+      const cols = state.viewCols||12;
+      grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+
+      state.days.forEach(d=>{
+        const dayEl = document.createElement('div');
+        dayEl.className = 'day'+(d.completed? ' completed':'');
+        dayEl.dataset.day = d.day;
+        const phaseName = PHASES.find(p=>p.id===d.phase).name.split(':')[0];
+        dayEl.innerHTML = `<div><div class='num'>Day ${d.day}</div><div class='phase'>${phaseName}</div></div><div class='small'>${d.notes? '📝':''}</div>`;
+        dayEl.onclick = ()=>openDay(d.day);
+
+        // filter
+        const q = filter.trim().toLowerCase();
+        if(q){
+          const inPhase = PHASES.find(p=>p.id===d.phase).name.toLowerCase().includes(q);
+          const inNotes = (d.notes||'').toLowerCase().includes(q);
+          const inTasks = d.tasks.some(t=>t.title.toLowerCase().includes(q));
+          const inNum = (`${d.day}`).includes(q);
+          if(!(inPhase||inNotes||inTasks||inNum)) return;
+        }
+
+        grid.appendChild(dayEl);
+      });
+    }
+
+    // --- Open day detail
+    let currentDay = null;
+    function openDay(n){
+      const day = state.days.find(x=>x.day===n);
+      currentDay = day.day;
+      $('detailTitle').textContent = `Day ${day.day} — ${PHASES.find(p=>p.id===day.phase).name}`;
+      $('detailSub').textContent = day.notes? day.notes: 'Adicione notas e marque tarefas como concluídas.';
+      renderTasks(day);
+    }
+    function renderTasks(day){
+      const tasksEl = $('tasks'); tasksEl.innerHTML='';
+      day.tasks.forEach((t,idx)=>{
+        const div = document.createElement('div'); div.className='task';
+        div.innerHTML = `<label style='display:flex;gap:10px;align-items:center;width:100%'><input type='checkbox' data-i='${idx}' ${t.done? 'checked':''}/> <div style='flex:1'><div style='font-weight:700'>${t.title}</div><textarea data-note='${idx}' placeholder='Notas...' style='width:100%;margin-top:6px;background:transparent;border:none;color:#dff3ff;resize:vertical'>${t.note||''}</textarea></div></label>`;
+        tasksEl.appendChild(div);
+        qs('input[type=checkbox]',div).onchange = (e)=>{
+          const i = +e.target.dataset.i; day.tasks[i].done = e.target.checked; save(); renderGrid($('searchInput').value);
+        }
+        qs('textarea',div).oninput = (e)=>{
+          const i = +e.target.getAttribute('data-note'); day.tasks[i].note = e.target.value; save();
+        }
+      })
+    }
+
+    // --- Actions
+    function save(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      updateSummary();
+      $('lastSaved').textContent = 'Último salvamento: ' + new Date().toLocaleString();
+    }
+
+    function updateSummary(){
+      const completed = state.days.filter(d=>d.completed || d.tasks.every(t=>t.done)).length;
+      $('completedCount').textContent = completed;
+      const pct = Math.round((completed/TOTAL)*100);
+      $('progressBar').style.width = pct + '%';
+    }
+
+    function markDayDone(n, val=true){
+      const d = state.days.find(x=>x.day===n); if(!d) return; d.completed = val; save(); renderGrid($('searchInput').value); openDay(n);
+    }
+
+    // --- Init UI bindings
+    $('searchInput').addEventListener('input',e=>renderGrid(e.target.value));
+    $('toggleView').onclick = ()=>{ state.viewCols = state.viewCols===12?6:12; save(); renderGrid($('searchInput').value) }
+    $('focusToday').onclick = ()=>{ const today = new Date(); const startDay = 1; alert('Use este app para marcar seu progresso — foque no dia atual do seu plano. (Dia calculado manualmente)') }
+
+    $('markDone').onclick = ()=>{ if(!currentDay) return alert('Selecione um dia'); markDayDone(currentDay,true) }
+    $('saveDay').onclick = ()=>{
+      if(!currentDay) return alert('Selecione um dia');
+      const day = state.days.find(x=>x.day===currentDay);
+      // collect notes textareas
+      const ta = Array.from(document.querySelectorAll('[data-note]'));
+      ta.forEach(t=>{
+        const idx = +t.getAttribute('data-note'); day.tasks[idx].note = t.value;
+      })
+      // optional: aggregate notes
+      day.notes = day.tasks.map(t=>t.note||'').filter(Boolean).join('\n');
+      save();
+      openDay(currentDay);
+    }
+
+    $('clearNotes').onclick = ()=>{
+      if(!currentDay) return; const d = state.days.find(x=>x.day===currentDay); d.notes=''; d.tasks.forEach(t=>t.note=''); save(); openDay(currentDay);
+    }
+
+    // Export / Import
+    $('exportBtn').onclick = ()=>{
+      const data = JSON.stringify(state, null, 2);
+      const blob = new Blob([data], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'english180_export.json'; a.click(); URL.revokeObjectURL(url);
+    }
+
+    $('importBtn').onclick = ()=>{
+      const f = $('importFile').files[0]; if(!f) return alert('Selecione um arquivo JSON para importar');
+      const reader = new FileReader(); reader.onload = ()=>{
+        try{ const parsed = JSON.parse(reader.result); if(parsed.days && Array.isArray(parsed.days)) { state = parsed; save(); renderGrid(); renderPhases(); alert('Importado com sucesso.'); } else alert('Arquivo inválido'); }
+        catch(e){alert('Erro ao importar: '+e.message)}
+      }; reader.readAsText(f);
+    }
+
+    $('resetBtn').onclick = ()=>{
+      if(!confirm('Resetar todo o progresso? Isso não pode ser desfeito.')) return;
+      localStorage.removeItem(STORAGE_KEY); location.reload();
+    }
+
+    // Affirmation
+    $('affirmation').value = state.affirmation || '';
+    $('saveAff').onclick = ()=>{ state.affirmation = $('affirmation').value; save(); alert('Afirmação salva.') }
+    $('playAff').onclick = ()=>{ playText(state.affirmation||$('affirmation').value) }
+
+    function playText(txt){
+      if(!('speechSynthesis' in window)) return alert('Seu navegador não suporta speechSynthesis.');
+      const utter = new SpeechSynthesisUtterance(txt);
+      utter.lang = 'en-US';
+      utter.rate = 0.95; utter.pitch = 1.02; window.speechSynthesis.cancel(); window.speechSynthesis.speak(utter);
+    }
+
+    // Update day interactions: double click toggles complete
+    document.addEventListener('dblclick', e=>{
+      const dayEl = e.target.closest('.day'); if(!dayEl) return; const n = +dayEl.dataset.day; const d = state.days.find(x=>x.day===n); d.completed = !d.completed; save(); renderGrid($('searchInput').value);
+    })
+
+    // filter by phase
+    function filterByPhase(phaseId){ renderGrid(''); document.querySelectorAll('.phase-item').forEach(n=>n.classList.remove('active'));
+      // highlight
+      Array.from(document.querySelectorAll('.phase-item')).forEach(el=>{ if(el.textContent.includes(PHASES.find(p=>p.id===phaseId).name.split(':')[0])) el.classList.add('active') });
+      renderGridByPhase(phaseId);
+    }
+    function renderGridByPhase(phaseId){ const grid = $('grid'); grid.innerHTML=''; state.days.filter(d=>d.phase===phaseId).forEach(d=>{
+      const el = document.createElement('div'); el.className='day'+(d.completed? ' completed':''); el.dataset.day = d.day; el.innerHTML = `<div><div class='num'>Day ${d.day}</div><div class='phase'>${PHASES.find(p=>p.id===d.phase).name.split(':')[0]}</div></div><div class='small'>${d.notes? '📝':''}</div>`;
+      el.onclick = ()=>openDay(d.day); grid.appendChild(el);
+    }) }
+
+    // start
+    renderPhases(); renderGrid(); updateSummary();
+
+    // open first day by default
+    openDay(1);
+
+    // small UX: keyboard shortcuts
+    document.addEventListener('keydown', e=>{
+      if(e.key==='ArrowRight'){ if(!currentDay) return; if(currentDay<180) openDay(currentDay+1) }
+      if(e.key==='ArrowLeft'){ if(!currentDay) return; if(currentDay>1) openDay(currentDay-1) }
+    })
+
+    // expose save on unload
+    window.addEventListener('beforeunload', ()=>save());
+  </script>
+
+</body>
+</html>
